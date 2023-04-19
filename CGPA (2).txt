@@ -1,0 +1,767 @@
+from graphics import *
+import time
+def dda(x1, y1, x2, y2, win):
+    dx = x2 - x1
+    dy = y2 - y1
+    steps = max(abs(dx), abs(dy))
+    if steps == 0:
+        return
+    x_inc = dx / steps
+    y_inc = dy / steps
+    x = x1
+    y = y1
+    for i in range(steps):
+        time.sleep(0.01)
+        pt = Point(int(round(x)), int(round(y)))
+        pt.draw(win)
+        x += x_inc
+        y += y_inc
+
+win = GraphWin("Square", 400, 400)
+
+x1, y1 = 100, 100
+x2, y2 = 100, 300
+x3, y3 = 300, 300
+x4, y4 = 300, 100
+
+dda(x1, y1, x2, y2, win)
+dda(x2, y2, x3, y3, win)
+dda(x3, y3, x4, y4, win)
+dda(x4, y4, x1, y1, win)
+
+win.getMouse()
+win.close()
+
+
+---------------------------- Bresenham-----------------------------------------------
+
+from graphics import *
+import time
+
+
+def BresenhamLine(x1, y1, x2, y2):
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
+    slope = dy / float(dx)
+
+    x, y = x1, y1
+    # creating the window
+    win = GraphWin('Brasenham Line', 600, 480)
+
+    # checking the slope if slope > 1
+    # then interchange the role of x and y
+    if slope > 1:
+        dx, dy = dy, dx
+        x, y = y, x
+        x1, y1 = y1, x1
+        x2, y2 = y2, x2
+    # initialization of the inital disision parameter
+    p = 2 * dy - dx
+
+    PutPixle(win, x, y)
+    for k in range(2, dx):
+        if p > 0:
+            y = y + 1 if y < y2 else y - 1
+            p = p + 2 * (dy - dx)
+        else:
+            p = p + 2 * dy
+        x = x + 1 if x < x2 else x - 1
+
+        # delay for 0.01 secs
+        time.sleep(0.01)
+        print(x, y)
+        PutPixle(win, x, y)
+    win.getMouse()
+    win.close()
+
+
+def PutPixle(win, x, y):
+    """ Plot A Pixle In The Windows At Point (x, y) """
+    pt = Point(x, y)
+    pt.draw(win)
+
+
+def main():
+    x1 = int(input("Enter Start X: "))
+    y1 = int(input("Enter Start Y: "))
+    x2 = int(input("Enter End X: "))
+    y2 = int(input("Enter End Y: "))
+    BresenhamLine(x1, y1, x2, y2)
+
+
+
+
+if __name__ == "__main__":
+    main()
+
+--------------------------------- Mid Point Circle -----------------------------------------------
+from graphics import *
+import time
+
+def midPointCircleDraw(x_center, y_center, r):
+    x = 0
+    y = r
+    P = 1 - r
+    while x <= y:
+        x += 1
+        plot_points(x_center , y_center,x,y,win)
+        if P <= 0:
+            P = P + 2 * x + 1
+        else:
+            y -= 1
+            P = P + 2 * x - 2 * y + 1
+        if (x > y):
+            break
+
+
+def plot_points(xc,yc , x,y,win):
+    time.sleep(0.01)
+    win.plotPixel(xc + x , yc + y , "red")
+    win.plotPixel(xc - x, yc + y, "red")
+    win.plotPixel(xc + x, yc - y, "red")
+    win.plotPixel(xc - x, yc - y, "red")
+    win.plotPixel(xc + y, yc + x, "red")
+    win.plotPixel(xc - y, yc + x, "red")
+    win.plotPixel(xc + y, yc - x, "red")
+    win.plotPixel(xc - y, yc - x, "red")
+
+if __name__ == '__main__':
+    x, y = map(int, input("Enter center coordinates:").split())
+    r = int(input("Enter radius:"))
+    midPointCircleDraw(x, y, r)
+
+
+----------------------------------- Bresenham's circle ------------------------------------
+
+from graphics import *
+
+def draw_circle(center_x, center_y, radius):
+    win = GraphWin("Circle", 500, 500)
+    x = 0
+    y = radius
+    d = 3 - 2 * radius
+
+    while x <= y:
+        plot_points(win, center_x, center_y, x, y)
+        x += 1
+        if d < 0:
+            d = d + 4 * x + 6
+        else:
+            y -= 1
+            d = d + 4 * (x - y) + 10
+
+    win.getMouse()
+    win.close()
+
+def plot_points(win, xc, yc, x, y):
+    time.sleep(0.01)
+    win.plotPixel(xc+x, yc+y, "red")
+    win.plotPixel(xc-x, yc+y, "black")
+    win.plotPixel(xc+x, yc-y, "black")
+    win.plotPixel(xc-x, yc-y, "black")
+    win.plotPixel(xc+y, yc+x, "black")
+    win.plotPixel(xc-y, yc+x, "black")
+    win.plotPixel(xc+y, yc-x, "black")
+    win.plotPixel(xc-y, yc-x, "black")
+
+center_x = int(input("Enter the X coordinate of the circle center: "))
+center_y = int(input("Enter the Y coordinate of the circle center: "))
+radius = int(input("Enter the radius of the circle: "))
+
+draw_circle(center_x , center_y , radius)
+
+----------------------------Point Clipping -----------------------------------
+import pygame
+
+# get user input for clipping window coordinates
+x_min = int(input("Enter the x-coordinate of the top-left corner of the clipping window: "))
+y_min = int(input("Enter the y-coordinate of the top-left corner of the clipping window: "))
+x_max = int(input("Enter the x-coordinate of the bottom-right corner of the clipping window: "))
+y_max = int(input("Enter the y-coordinate of the bottom-right corner of the clipping window: "))
+
+# get user input for points to be clipped
+points = []
+num_points = int(input("Enter the number of points to be clipped: "))
+for i in range(num_points):
+    x = int(input("Enter the x-coordinate of point {}: ".format(i+1)))
+    y = int(input("Enter the y-coordinate of point {}: ".format(i+1)))
+    points.append((x, y))
+
+# initialize Pygame
+pygame.init()
+
+# set up the display window
+screen = pygame.display.set_mode((900, 700))
+
+# set the color of the clipping window and draw it
+clip_color = (255, 255, 255)
+pygame.draw.rect(screen, clip_color, (x_min, y_min, x_max-x_min, y_max-y_min), 3)
+
+# set the color of the points and draw them
+point_color = (255, 0, 0)
+for point in points:
+    pygame.draw.circle(screen, point_color, point, 3)
+
+# perform point clipping
+clipped_points = []
+for point in points:
+    x, y = point
+    if x >= x_min and x <= x_max and y >= y_min and y <= y_max:
+        clipped_points.append(point)
+
+# set the color of the clipped points and draw them
+clipped_color = (0, 255, 0)
+for point in clipped_points:
+    pygame.draw.circle(screen, clipped_color, point, 3)
+
+# update the display
+pygame.display.update()
+
+# wait for the user to close the window
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+------------------------ Cohen Sutherland ----------------------------------------------
+import pygame
+
+pygame.init()
+
+# Define the colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
+# Set up the window
+WINDOW_SIZE = (800, 600)
+screen = pygame.display.set_mode(WINDOW_SIZE)
+
+pygame.display.set_caption("Cohen-Sutherland Line Clipping")
+
+# User input for the clipping area
+x_max = float(input("Enter x_max: "))
+y_max = float(input("Enter y_max: "))
+x_min = float(input("Enter x_min: "))
+y_min = float(input("Enter y_min: "))
+
+# Define the start and end points of the line
+x1, y1 = 100, 200
+x2, y2 = 500, 400
+
+# Clip the line
+def computeCode(x, y, x_min, y_min, x_max, y_max):
+    INSIDE = 0
+    LEFT = 1
+    RIGHT = 2
+    BOTTOM = 4
+    TOP = 8
+
+    code = INSIDE
+    if x < x_min:
+        code |= LEFT
+    elif x > x_max:
+        code |= RIGHT
+    if y < y_min:
+        code |= BOTTOM
+    elif y > y_max:
+        code |= TOP
+
+    return code
+
+def cohenSutherlandClip(x1, y1, x2, y2, x_min, y_min, x_max, y_max):
+    INSIDE = 0
+    LEFT = 1
+    RIGHT = 2
+    BOTTOM = 4
+    TOP = 8
+
+    code1 = computeCode(x1, y1, x_min, y_min, x_max, y_max)
+    code2 = computeCode(x2, y2, x_min, y_min, x_max, y_max)
+    accept = False
+
+    while True:
+        if code1 == 0 and code2 == 0:
+            accept = True
+            break
+        elif (code1 & code2) != 0:
+            break
+        else:
+            x = 1.0
+            y = 1.0
+            if code1 != 0:
+                code_out = code1
+            else:
+                code_out = code2
+            if code_out & TOP:
+                x = x1 + (x2 - x1) * (y_max - y1) / (y2 - y1)
+                y = y_max
+            elif code_out & BOTTOM:
+                x = x1 + (x2 - x1) * (y_min - y1) / (y2 - y1)
+                y = y_min
+            elif code_out & RIGHT:
+                y = y1 + (y2 - y1) * (x_max - x1) / (x2 - x1)
+                x = x_max
+            elif code_out & LEFT:
+                y = y1 + (y2 - y1) * (x_min - x1) / (x2 - x1)
+                x = x_min
+            if code_out == code1:
+                x1 = x
+                y1 = y
+                code1 = computeCode(x1, y1, x_min, y_min, x_max, y_max)
+            else:
+                x2 = x
+                y2 = y
+                code2 = computeCode(x2, y2, x_min, y_min, x_max, y_max)
+
+    if accept:
+        return (x1, y1, x2, y2)
+    else:
+        return None
+
+# Draw the clipped line on the screen
+def drawLine(clipped_line):
+    clip_color = (255, 255, 255)
+    pygame.draw.rect(screen, clip_color, (x_min, y_min, x_max - x_min, y_max - y_min), 1)
+    if clipped_line:
+        pygame.draw.line(screen, WHITE, (clipped_line[0], clipped_line[1]), (clipped_line[2], clipped_line[3]), 5)
+    pygame.display.flip()
+
+# Run the game loop
+running = True
+
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Set the title of the window
+    pygame.display.set_caption("Cohen-Sutherland Line Clipping")
+
+    # Clip the line
+    clipped_line = cohenSutherlandClip(x1, y1, x2, y2, x_min, y_min, x_max, y_max)
+
+    # Draw the clipped line on the screen
+    # screen.fill(WHITE)
+    drawLine(clipped_line)
+
+# Quit Pygame properly
+pygame.quit()
+
+-------------------------Liang Barksley----------------------------
+import pygame
+import sys
+
+# Define the Liang-Barsky line clipping algorithm function
+def liang_barsky(x1, y1, x2, y2, xmin, ymin, xmax, ymax):
+    dx = x2 - x1
+    dy = y2 - y1
+    p1 = -dx
+    p2 = dx
+    p3 = -dy
+    p4 = dy
+
+    q1 = x1 - xmin
+    q2 = xmax - x1
+    q3 = y1 - ymin
+    q4 = ymax - y1
+
+    posarr = []
+    negarr = []
+
+    if p1 == 0 and q1 < 0 or p3 == 0 and q3 < 0:
+        return None
+
+    if p1 != 0:
+        r1 = q1 / p1
+        if p1 < 0:
+            negarr.append(r1)
+        else:
+            posarr.append(r1)
+
+    if p2 != 0:
+        r2 = q2 / p2
+        if p2 < 0:
+            negarr.append(r2)
+        else:
+            posarr.append(r2)
+
+    if p3 != 0:
+        r3 = q3 / p3
+        if p3 < 0:
+            negarr.append(r3)
+        else:
+            posarr.append(r3)
+
+    if p4 != 0:
+        r4 = q4 / p4
+        if p4 < 0:
+            negarr.append(r4)
+        else:
+            posarr.append(r4)
+
+    u1 = max(negarr) if len(negarr) > 0 else 0
+    u2 = min(posarr) if len(posarr) > 0 else 1
+
+    if u1 > u2:
+        return None
+
+    nx1 = x1 + u1 * dx
+    ny1 = y1 + u1 * dy
+    nx2 = x1 + u2 * dx
+    ny2 = y1 + u2 * dy
+
+    return int(nx1), int(ny1), int(nx2), int(ny2)
+
+# Initialize pygame and create a display window
+pygame.init()
+screen = pygame.display.set_mode((600, 600))
+pygame.display.set_caption("Liang-Barsky Line Clipping Algorithm")
+
+# Get user input for the clipping window coordinates
+xmin = int(input("Enter Xmin: "))
+ymin = int(input("Enter Ymin: "))
+xmax = int(input("Enter Xmax: "))
+ymax = int(input("Enter Ymax: "))
+
+# Draw the clipping window
+pygame.draw.rect(screen, (255, 0, 0), (xmin, ymin, xmax-xmin, ymax-ymin), 2)
+
+# Get user input for the line coordinates
+x1 = int(input("Enter X1: "))
+y1 = int(input("Enter Y1: "))
+x2 = int(input("Enter X2: "))
+y2 = int(input("Enter Y2: "))
+
+# Clip the line using the Liang-Barsky algorithm
+result = liang_barsky(x1, y1, x2, y2, xmin, ymin, xmax, ymax)
+
+# Draw the original line
+pygame.draw.line(screen, (0, 0, 255), (x1, y1), (x2, y2), 2)
+
+# Draw the clipped line (if any)
+if result is not None:
+    nx1, ny1, nx2, ny2 = result
+    pygame.draw.line(screen, (0, 255, 0), (nx1, ny1), (nx2, ny2), 2)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        pygame.display.update()
+sys.exit()
+
+
+---------------- Polygon clipping------------------------
+import pygame
+from pygame.locals import *
+import sys
+pygame.init()
+
+screen_width = 640
+screen_height = 480
+clip_left = int(input("Enter the left coordinate of the clipping window: "))
+clip_top = int(input("Enter the top coordinate of the clipping window: "))
+clip_right = int(input("Enter the right coordinate of the clipping window: "))
+clip_bottom = int(input("Enter the bottom coordinate of the clipping window: "))
+
+polygon = [(100, 200), (200, 100), (300, 200), (200, 300)]
+
+def clip_left_edge(polygon):
+    clipped_polygon = []
+    prev_vertex = polygon[-1]
+    for vertex in polygon:
+        if vertex[0] >= clip_left:
+            if prev_vertex[0] < clip_left:
+                clipped_vertex = intersection(prev_vertex, vertex, (clip_left, clip_top), (clip_left, clip_bottom))
+                clipped_polygon.append(clipped_vertex)
+            clipped_polygon.append(vertex)
+        elif prev_vertex[0] >= clip_left:
+            clipped_vertex = intersection(prev_vertex, vertex, (clip_left, clip_top), (clip_left, clip_bottom))
+            clipped_polygon.append(clipped_vertex)
+        prev_vertex = vertex
+    return clipped_polygon
+
+def clip_top_edge(polygon):
+    clipped_polygon = []
+    prev_vertex = polygon[-1]
+    for vertex in polygon:
+        if vertex[1] >= clip_top:
+            if prev_vertex[1] < clip_top:
+                clipped_vertex = intersection(prev_vertex, vertex, (clip_left, clip_top), (clip_right, clip_top))
+                clipped_polygon.append(clipped_vertex)
+            clipped_polygon.append(vertex)
+        elif prev_vertex[1] >= clip_top:
+            clipped_vertex = intersection(prev_vertex, vertex, (clip_left, clip_top), (clip_right, clip_top))
+            clipped_polygon.append(clipped_vertex)
+        prev_vertex = vertex
+    return clipped_polygon
+
+def clip_right_edge(polygon):
+    clipped_polygon = []
+    prev_vertex = polygon[-1]
+    for vertex in polygon:
+        if vertex[0] <= clip_right:
+            if prev_vertex[0] > clip_right:
+                clipped_vertex = intersection(prev_vertex, vertex, (clip_right, clip_top), (clip_right, clip_bottom))
+                clipped_polygon.append(clipped_vertex)
+            clipped_polygon.append(vertex)
+        elif prev_vertex[0] <= clip_right:
+            clipped_vertex = intersection(prev_vertex, vertex, (clip_right, clip_top), (clip_right, clip_bottom))
+            clipped_polygon.append(clipped_vertex)
+        prev_vertex = vertex
+    return clipped_polygon
+
+def clip_bottom_edge(polygon):
+    clipped_polygon = []
+    prev_vertex = polygon[-1]
+    for vertex in polygon:
+        if vertex[1] <= clip_bottom:
+            if prev_vertex[1] > clip_bottom:
+                clipped_vertex = intersection(prev_vertex, vertex, (clip_left, clip_bottom), (clip_right, clip_bottom))
+                clipped_polygon.append(clipped_vertex)
+            clipped_polygon.append(vertex)
+        elif prev_vertex[1] <= clip_bottom:
+            clipped_vertex = intersection(prev_vertex, vertex, (clip_left, clip_bottom), (clip_right, clip_bottom))
+            clipped_polygon.append(clipped_vertex)
+        prev_vertex = vertex
+    return clipped_polygon
+
+def intersection(p1, p2, p3, p4):
+    x1, y1 = p1
+    x2, y2 = p2
+    x3, y3 = p3
+    x4, y4 = p4
+    x = ((x1*y2 - y1*x2)*(x3 - x4) - (x1 - x2)*(x3*y4 - y3*x4))/((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
+    y = ((x1*y2 - y1*x2)*(y3 - y4) - (y1 - y2)*(x3*y4 - y3*x4))/((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
+    return (int(x), int(y))
+
+clipped_polygon = clip_left_edge(polygon)
+clipped_polygon = clip_right_edge(clipped_polygon)
+clipped_polygon = clip_bottom_edge(clipped_polygon)
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.draw.polygon(screen, (255, 255, 255), polygon)
+if len(clipped_polygon) > 2:
+    pygame.draw.polygon(screen, (255, 0, 0), clipped_polygon)
+# pygame.draw.polygon(screen, (255, 0, 0), clipped_polygon)
+pygame.display.update()
+
+while True:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+    pygame.display.update()
+
+----------------- Scaling Factor ---------------------------------------
+import pygame
+import sys
+
+# Function to get user input for triangle vertices
+def get_triangle_vertices():
+    triangle = []
+    for i in range(3):
+        x = int(input("Enter x-coordinate for vertex {} of the triangle: ".format(i + 1)))
+        y = int(input("Enter y-coordinate for vertex {} of the triangle: ".format(i + 1)))
+        triangle.append((x, y))
+    return triangle
+
+# Function to get user input for scaling factors
+def get_scaling_factors():
+    scale_x = float(input("Enter scaling factor for x: "))
+    scale_y = float(input("Enter scaling factor for y: "))
+    return scale_x, scale_y
+
+# Get user input for triangle vertices and scaling factors
+triangle = get_triangle_vertices()
+scale_x, scale_y = get_scaling_factors()
+
+# Initialize Pygame
+pygame.init()
+
+# Set up display
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("2D Scaling")
+
+# Perform scaling transformation
+scaled_triangle = []
+for vertex in triangle:
+    scaled_vertex = (int(vertex[0] * scale_x), int(vertex[1] * scale_y))
+    scaled_triangle.append(scaled_vertex)
+
+# Draw original triangle in blue
+pygame.draw.polygon(screen, (0, 0, 255), triangle, 1)
+
+# Draw scaled triangle in red
+pygame.draw.polygon(screen, (255, 0, 0), scaled_triangle, 1)
+
+# Update display
+pygame.display.flip()
+
+# Main game loop
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+-------------------- Shearing Factor X  -------------------------------------------
+import pygame
+import sys
+
+# Function to get user input for square vertices
+def get_square_vertices():
+    square = []
+    for i in range(4):
+        x = int(input("Enter x-coordinate for vertex {} of the square: ".format(i + 1)))
+        y = int(input("Enter y-coordinate for vertex {} of the square: ".format(i + 1)))
+        square.append((x, y))
+    return square
+
+# Function to get user input for shearing factor
+def get_shearing_factor():
+    shear_x = float(input("Enter shearing factor along x-axis: "))
+    return shear_x
+
+# Get user input for square vertices and shearing factor
+square = get_square_vertices()
+shear_x = get_shearing_factor()
+
+# Initialize Pygame
+pygame.init()
+
+# Set up display
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("2D Shearing")
+
+# Perform shearing transformation
+sheared_square = []
+for vertex in square:
+    sheared_vertex = (int(vertex[0] + shear_x * vertex[1]), vertex[1])
+    sheared_square.append(sheared_vertex)
+
+# Draw original square in blue
+pygame.draw.polygon(screen, (0, 0, 255), square, 1)
+
+# Draw sheared square in red
+pygame.draw.polygon(screen, (255, 0, 0), sheared_square, 1)
+
+# Update display
+pygame.display.flip()
+
+# Main game loop
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+---------------------------Shearing Factor Y ----------------------------------------
+import pygame
+import sys
+
+# Function to get user input for square vertices
+def get_square_vertices():
+    square = []
+    for i in range(4):
+        x = int(input("Enter x-coordinate for vertex {} of the square: ".format(i + 1)))
+        y = int(input("Enter y-coordinate for vertex {} of the square: ".format(i + 1)))
+        square.append((x, y))
+    return square
+
+# Function to get user input for shearing factor
+def get_shearing_factor():
+    shear_y = float(input("Enter shearing factor along y-axis: "))
+    return shear_y
+
+# Get user input for square vertices and shearing factor
+square = get_square_vertices()
+shear_y = get_shearing_factor()
+
+# Initialize Pygame
+pygame.init()
+
+# Set up display
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("2D Shearing")
+
+# Perform shearing transformation
+sheared_square = []
+for vertex in square:
+    sheared_vertex = (vertex[0], int(vertex[1] + shear_y * vertex[0]))
+    sheared_square.append(sheared_vertex)
+
+# Draw original square in blue
+pygame.draw.polygon(screen, (0, 0, 255), square, 1)
+
+# Draw sheared square in red
+pygame.draw.polygon(screen, (255, 0, 0), sheared_square, 1)
+
+# Update display
+pygame.display.flip()
+
+# Main game loop
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+----------------------- Rotation-------------------------------------------
+
+import pygame
+import sys
+import math
+
+# Get user input for triangle vertices
+vertex1_x = int(input("Enter x-coordinate of vertex 1: "))
+vertex1_y = int(input("Enter y-coordinate of vertex 1: "))
+vertex2_x = int(input("Enter x-coordinate of vertex 2: "))
+vertex2_y = int(input("Enter y-coordinate of vertex 2: "))
+vertex3_x = int(input("Enter x-coordinate of vertex 3: "))
+vertex3_y = int(input("Enter y-coordinate of vertex 3: "))
+
+# Define triangle vertices
+triangle = [(vertex1_x, vertex1_y), (vertex2_x, vertex2_y), (vertex3_x, vertex3_y)]
+
+# Get user input for rotation angle
+angle = float(input("Enter rotation angle in degrees: "))
+
+# Convert angle to radians
+angle_rad = math.radians(angle)
+
+# Initialize Pygame
+pygame.init()
+
+# Set up display
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("2D Rotation")
+
+# Perform rotation transformation
+rotated_triangle = []
+for vertex in triangle:
+    rotated_x = int((vertex[0] - triangle[2][0]) * math.cos(angle_rad) - (vertex[1] - triangle[2][1]) * math.sin(angle_rad) + triangle[2][0])
+    rotated_y = int((vertex[0] - triangle[2][0]) * math.sin(angle_rad) + (vertex[1] - triangle[2][1]) * math.cos(angle_rad) + triangle[2][1])
+    rotated_vertex = (rotated_x, rotated_y)
+    rotated_triangle.append(rotated_vertex)
+
+# Draw original triangle in blue
+pygame.draw.polygon(screen, (0, 0, 255), triangle, 1)
+
+# Draw rotated triangle in red
+pygame.draw.polygon(screen, (255, 0, 0), rotated_triangle, 1)
+
+# Update display
+pygame.display.flip()
+
+# Main game loop
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
